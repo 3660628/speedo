@@ -1,0 +1,4 @@
+[submodule "caffe"]
+	path = caffe
+	url = https://github.com/obdg/caffe.git
+	branch = speedo

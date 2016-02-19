@@ -1,0 +1,21 @@
+<!-- Base configuration for Yarn Application -->
+
+<properties>
+	<containerContext>
+	  <containerMemory>1</containerMemory>
+	  <containerCores>1</containerCores>
+	  <priorityLevel>0</priorityLevel>
+	</containerContext>
+
+	<appContext>
+	  <numberOfContainer>2</numberOfContainer>
+	  <appMemory>1</appMemory>
+	  <appCores>1</appCores>
+	  <appName>yarnApp</appName>
+	  <queueType>default</queueType>
+	</appContext>
+
+	<jvm>
+	  <javaOpts>-Xmx1024M</javaOpts>
+	</jvm>
+</properties>
