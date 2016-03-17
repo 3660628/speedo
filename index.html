@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Speedo by obdg</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Speedo</h1>
+      <h2 class="project-tagline">Parallelizing Stochastic Gradient Descent for Deep Convolutional Neural Network</h2>
+      <a href="https://github.com/obdg/speedo" class="btn">View on GitHub</a>
+      <a href="https://github.com/obdg/speedo/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/obdg/speedo/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="speedo---parallelizing-stochastic-gradient-descent-for-deep-convolutional-neural-network" class="anchor" href="#speedo---parallelizing-stochastic-gradient-descent-for-deep-convolutional-neural-network" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SpeeDo - Parallelizing Stochastic Gradient Descent for Deep Convolutional Neural Network</h1>
+
+<h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>Convolutional Neural Networks (CNNs) have achieved breakthrough results on many machine learning tasks. However, training CNNs is computationally intensive. When the size of training data is large and the depth of CNNs is high, as typically required for attaining high classification accuracy, training a model can take days and even weeks. So we propose <a href="http://learningsys.org/papers/LearningSys_2015_paper_13.pdf">SpeeDO</a> (for Open DEEP learning System in backward order), a deep learning system designed for off-the-shelf hardwares. SpeeDO can be easily deployed, scaled and maintained in a cloud environment, such as AWS EC2 cloud, Google GCE, and Microsoft Azure.</p>
+
+<p>In our implement, we support 5 distributed SGD models to speed up the training:</p>
+
+<ul>
+<li>Synchronous SGD</li>
+<li>Asynchronous SGD</li>
+<li>Partially Synchronous SGD</li>
+<li>Weed-Out SGD</li>
+<li>Elastic Averaging SGD</li>
+</ul>
+
+<p>Please cite <a href="http://learningsys.org/papers/LearningSys_2015_paper_13.pdf">SpeeDO</a> in your publications if it helps your research:</p>
+
+<pre><code>@article{zhengspeedo,
+  title={SpeeDO: Parallelizing Stochastic Gradient Descent for Deep Convolutional Neural Network},
+  author={Zheng, Zhongyang and Jiang, Wenrui and Wu, Gang and Chang, Edward Y}
+}
+</code></pre>
+
+<h2>
+<a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h2>
+
+<p>SpeeDO takes advantage of many existing solutions in the open-source community, data flow of SpeeDO:</p>
+
+<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_architecture.png" alt="Architecture and data flow of SpeeDO" title="Architecture and data flow of SpeeDO"></p>
+
+<p>SpeeDO mainly contains these components:</p>
+
+<ul>
+<li>
+<a href="http://caffe.berkeleyvision.org/">Caffe</a> (required)</li>
+<li>
+<a href="http://redis.io">Redis</a> (required)</li>
+<li>
+<a href="http://akka.io">Akka</a>  (required)</li>
+<li>
+<a href="https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html">Yarn</a>  [optional]</li>
+<li>
+<a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsUserGuide.html">HDFS</a>  [optional]</li>
+</ul>
+
+<p>These components denote what we need to deploy before the distributed training.</p>
+
+<h1>
+<a id="deploy-and-run" class="anchor" href="#deploy-and-run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Deploy and Run</h1>
+
+<h2>
+<a id="pre-requisite" class="anchor" href="#pre-requisite" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pre-requisite</h2>
+
+<ul>
+<li>JDK 1.7+</li>
+<li><a href="http://redis.io/download">Redis Server</a></li>
+<li>Ubuntu 12.04+ (not test on other linux os family)</li>
+<li>Network connection: You need to connect to maven and ivy repositories when compiling the demo</li>
+</ul>
+
+<p>SpeeDO is running in <strong>Master-Slaves(Worker)</strong> archiecture. To avoid manual process in running, and distribute input data in Master and worker nodes, we can use YARN and HDFS. In below, we provides the instruction to run SpeeDO for both scenarios.</p>
+
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>YARN present</th>
+<th>HDFS present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>NOTE</strong></p>
+
+<p>i. YARN is used for nodes resource scheduling. If YARN is not present, we can run our Master , and Worker process manually.</p>
+
+<p>ii. HDFS is used for storing training data and network definition of caffe. If HDFS is not present, we can use shared-files system (like NFS ) or manually copying these files to each nodes.</p>
+
+<p>We provide the steps to run configuration <strong>A</strong> and <strong>B</strong> here:</p>
+
+<ul>
+<li>For configuration <strong>A</strong>, we manually deploy and run on all nodes.</li>
+<li>For configuration <strong>B</strong>, we use <a href="http://www.cloudera.com/documentation/manager/5-1-x/Cloudera-Manager-Installation-Guide/Cloudera-Manager-Installation-Guide.html">cloudera</a> (offering us both YARN and HDFS) to deploy and run SpeeDO.</li>
+</ul>
+
+<h2>
+<a id="a-deploy-and-run-speedo-without-yarn-and-hdfs" class="anchor" href="#a-deploy-and-run-speedo-without-yarn-and-hdfs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A. Deploy and run SpeeDO without YARN and HDFS</h2>
+
+<p><strong>Before deploying manually on all nodes, we offer the one key deployment by docker for a quick start</strong>:</p>
+
+<h3>
+<a id="step0-pull-image" class="anchor" href="#step0-pull-image" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.0 Pull image</h3>
+
+<p>Pull the speedo image with caffe and all its dependencies installed:</p>
+
+<div class="highlight highlight-source-shell"><pre>docker pull obdg/speedo:latest</pre></div>
+
+<h3>
+<a id="step1-run-containers-on-cluster" class="anchor" href="#step1-run-containers-on-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.1 Run containers on cluster</h3>
+
+<p>The following example will run 1000 iterations asynchronously using 1 Master with 3 workers ( 4 cluster nodes )</p>
+
+<h4>
+<a id="master" class="anchor" href="#master" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Master</h4>
+
+<p>Launch master container on your master node (in default Async model with 3 workers):</p>
+
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo</pre></div>
+
+<p><strong>Or</strong> run master actor in Easgd model with 3 workers</p>
+
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo master <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> 3 --test 0 --maxIter 1000 --movingRate 0.5</pre></div>
+
+<p>Please replaces <code>master-address</code> with master node's ip</p>
+
+<p><strong>NOTE</strong>
+Redis service will be started automatically when launching master container</p>
+
+<h4>
+<a id="worker" class="anchor" href="#worker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Worker</h4>
+
+<p>Launch 3 worker containers on different worker nodes:</p>
+
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-worker --net=host obdg/speedo worker <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span></pre></div>
+
+<p>Please replaces <code>master-address</code> with master node's ip, and <code>worker-address</code> with the current worker node's ip</p>
+
+<p>This is the quick start by docker. <strong>If you still want to go through the detail steps for deployment, we offer the step by step guide as well</strong>:</p>
+
+<h3>
+<a id="step0-pre-requistie" class="anchor" href="#step0-pre-requistie" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.0 Pre-requistie</h3>
+
+<p>Install at each nodes ( Master and Worker)
+1. JDK 1.7+
+2. Redis Server
+3. Clone SpeeDO and Caffe source from our github repo</p>
+
+<p>Please use</p>
+
+<pre><code>git clone --recursive git@github.com/obdg/speedo.git # SpeeDO and caffe
+</code></pre>
+
+<h3>
+<a id="step1-install-caffe-and-its-dependencies" class="anchor" href="#step1-install-caffe-and-its-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.1 Install caffe and its dependencies</h3>
+
+<p>Install <a href="https://github.com/obdg/caffe">speedo/caffe</a> and all its dependencies on each nodes , please refer to section <strong>A. Manually install on all cluster nodes</strong> from <a href="https://github.com/obdg/caffe">speedo/caffe install guide</a>.</p>
+
+<h3>
+<a id="step2-prepare-input-data-to-run-under-caffe" class="anchor" href="#step2-prepare-input-data-to-run-under-caffe" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.2 Prepare Input Data to run under Caffe</h3>
+
+<p><strong>NOTE</strong>: We prefer to use <strong>datumfile</strong> format for SpeeDO ( see <a href="https://github.com/BVLC/caffe/pull/2193">caffe-pullrequest-2193</a> ) instead of the default leveldb/lmdb format during training in Caffe to solve the memory usage problem ( refer to <a href="https://github.com/BVLC/caffe/issues/1377">caffe-issues-1377</a>).</p>
+
+<p>The input data required by Caffe, including:</p>
+
+<ul>
+<li>solver definition</li>
+<li>network definition</li>
+<li>training datasets</li>
+<li>testing datasets</li>
+<li>mean values</li>
+</ul>
+
+<p>In this example, let's train cifar10 dataset and generate <code>training datasets</code> and <code>testing datasets</code> in dataumfile format:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> caffe
+./data/cifar10/get_cifar10.sh <span class="pl-c"># download cifar dataset</span>
+./examples/speedo/create_cifar10.sh  <span class="pl-c"># create protobuf file - in datumfile instead of leveldb/lmdb format</span></pre></div>
+
+<p><code>Solver definition</code>, <code>network definition</code> and <code>means values</code> written in datumfile format for cifar10 is provided at examples/speedo.</p>
+
+<blockquote>
+<p>If you want to manually produce these files, please follow the steps below. (Modify all paths in network definitions if needed ) :</p>
+
+<div class="highlight highlight-source-shell"><pre>sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/mean.binaryproto/mean.binaryproto/g<span class="pl-pds">"</span></span> cifar10_full_train_test.prototxt
+sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifar10_train_lmdb/cifar10_train_datumfile/g<span class="pl-pds">"</span></span> cifar10_full_train_test.prototxt
+sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifar10_test_lmdb/cifar10_test_datumfile/g<span class="pl-pds">"</span></span> cifar10_full_train_test.prototxt
+sed -i <span class="pl-s"><span class="pl-pds">"</span>s/backend: LMDB/backend: DATUMFILE/g<span class="pl-pds">"</span></span> cifar10_full_train_test.prototxt
+sed -i <span class="pl-s"><span class="pl-pds">"</span>17i\    rand_skip: 50000<span class="pl-pds">"</span></span> cifar10_full_train_test.prototxt
+sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifar10_full_train_test.prototxt/cifar10_full_train_test.prototxt/g<span class="pl-pds">"</span></span> cifar10_full_solver.prototxt</pre></div>
+</blockquote>
+
+<p>At last, put the data in the same location(like /tmp/caffe/cifar10) on <strong>all Master and Workers node</strong>. You can do that by <a href="https://www.ansible.com/">Ansible</a> or just scp to the right location.</p>
+
+<h3>
+<a id="step3--training-under-speedo" class="anchor" href="#step3--training-under-speedo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.3  Training under SpeeDO</h3>
+
+<p>SpeeDO use Master + Worker archiecture for the distributed training (Please refer to our paper for the detail information). We need to start Master node and Worker node as below.</p>
+
+<h4>
+<a id="compile-bundle-jar" class="anchor" href="#compile-bundle-jar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compile bundle jar</h4>
+
+<p>On each master and worker nodes, run</p>
+
+<div class="highlight highlight-source-shell"><pre>git clone git@github.com/obdg/speedo.git <span class="pl-c"># if not done yet</span>
+<span class="pl-c1">cd</span> speedo
+./sbt akka:assembly</pre></div>
+
+<h4>
+<a id="run-master-and-worker-process" class="anchor" href="#run-master-and-worker-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Run Master and Worker process</h4>
+
+<p>The following example will run 1000 iterations asynchronously using 1 Master with 3 workers ( 4 cluster nodes ).</p>
+
+<h5>
+<a id="master-1" class="anchor" href="#master-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Master</h5>
+
+<p>Launch master process on your master node:</p>
+
+<div class="highlight highlight-source-shell"><pre>JAVA_LIBRARY_PATH=<span class="pl-smi">$JAVA_LIBRARY_PATH</span>:/usr/lib java -cp target/scala-2.11/SpeeDO-akka-1.0.jar -Xmx2G com.htc.speedo.akka.AkkaUtil --solver /absolute_path/to/cifar10_full_solver.prototxt --worker 3 --redis <span class="pl-k">&lt;</span>redis-address<span class="pl-k">&gt;</span> --test 500 --maxIter 1000 --host <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">2&gt;</span> /dev/null</pre></div>
+
+<p>Please replaces <code>redis-address</code> with the redis server location, and <code>master-address</code> with master node's ip/hostname.</p>
+
+<p>This should output some thing like:</p>
+
+<pre><code>[INFO] [03/03/2016 15:07:41.626] [main] [Remoting] Starting remoting
+[INFO] [03/03/2016 15:07:41.761] [main] [Remoting] Remoting started; listening on addresses :[akka.tcp://SpeeDO@cloud-master:56126]
+[INFO] [03/03/2016 15:07:41.763] [main] [Remoting] Remoting now listens on addresses: [akka.tcp://SpeeDO@cloud-master:56126]
+[INFO] [03/03/2016 15:07:41.777] [SpeeDO-akka.actor.default-dispatcher-3] [akka.tcp://SpeeDO@cloud-master:56126/user/host] Waiting for 3 workers to join.
+</code></pre>
+
+<h5>
+<a id="worker-1" class="anchor" href="#worker-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Worker</h5>
+
+<p>Launch 3 workers process on worker nodes:</p>
+
+<div class="highlight highlight-source-shell"><pre>JAVA_LIBRARY_PATH=<span class="pl-smi">$JAVA_LIBRARY_PATH</span>:/usr/lib java -cp target/scala-2.11/SpeeDO-akka-1.0.jar -Xmx2G com.htc.speedo.akka.AkkaUtil --host <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span> --master <span class="pl-k">&lt;</span>masteractor-addr<span class="pl-k">&gt;</span> <span class="pl-k">2&gt;</span> /dev/null</pre></div>
+
+<p>Please replaces <code>worker-address</code> with worker's ip/hostname,  and <code>masteractor-addr</code> with master actor address.</p>
+
+<p>The format of master actor address is <strong><code>akka.tcp://SpeeDO@cloud-master:56126/user/host</code></strong>, where cloud-master is the hostname of master node, and 56126 is the TCP port listen by akka's actor. Since the port is random by default, the address can vary in different runs. You can also use fixed port by passing a <code>--port &lt;port&gt;</code> command line argument when start Master.</p>
+
+<h2>
+<a id="b-deploy-and-run-speedo-by-cloudera" class="anchor" href="#b-deploy-and-run-speedo-by-cloudera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>B. Deploy and run SpeeDO by cloudera</h2>
+
+<p>To try a cloudera solution for SpeeDO. Please refer <a href="https://github.com/obdg/speedo/blob/master/README_YARN.md">Run SpeeDO on Yarn &amp; HDFS Cluster</a></p>
+
+<h2>
+<a id="experiments-on-aws" class="anchor" href="#experiments-on-aws" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Experiments on AWS</h2>
+
+<p>The Cifar10 dataset is used to validate all parallel implementations on a CPU cluster with four 8-core instances</p>
+
+<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_psgd_cpu.png" alt="SGD parallel schemes on CPU cluster" title="SGD parallel schemes on CPU cluster"></p>
+
+<p>Training <a href="http://www.cs.unc.edu/%7Ewliu/papers/GoogLeNet.pdf">GoogleNet</a> on a GPU cluster for different parallel implementations</p>
+
+<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_psgd_gpu.png" alt="SGD parallel schemes on GPU cluster" title="SGD parallel schemes on GPU cluster"></p>
+
+<p>EASGD achieves the best speedup in our parallel implementations. And parameters of it have great impact for the speedup.</p>
+
+<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_easgd_gpu.png" alt="Parameter Analysis of EASGD on GPU Cluster" title="Parameter Analysis of EASGD on GPU Cluster"></p>
+
+<h2>
+<a id="authors" class="anchor" href="#authors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors</h2>
+
+<ul>
+<li><a href="https://github.com/zyzheng">Zhongyang Zheng</a></li>
+<li><a href="https://github.com/wenruij">Wenrui Jiang</a></li>
+<li><a href="https://github.com/simonandluna">Gang Wu</a></li>
+</ul>
+
+<h2>
+<a id="supervisor" class="anchor" href="#supervisor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supervisor</h2>
+
+<ul>
+<li><a href="http://infolab.stanford.edu/%7Eechang/">Edward Y. Chang</a></li>
+</ul>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright 2016 HTC Corporation</p>
+
+<p>Licensed under the Apache License, Version 2.0: <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/obdg/speedo">Speedo</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
