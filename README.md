@@ -63,10 +63,12 @@ We provide the steps to run configuration **A** and **B** here:
 
 ## A. Deploy and run SpeeDO without YARN and HDFS
 
-**Before deploying manually on all nodes, we offer the one key deployment by docker for a quick start**:
+We provides TWO methods here: 1) Docker , 2) Manual ( step by step)
+
+##1. Quick Start ( via Docker )
 
 ### Step.0 Pull image
-Pull the speedo image with caffe and all its dependencies installed:
+Pull the speedo image ( bundled with caffe and all its dependencies libraries):
 ```bash
 docker pull obdg/speedo:latest
 ```
@@ -98,7 +100,7 @@ docker run -d --name=speedo-worker --net=host obdg/speedo worker <master-address
 
 Please replaces `master-address` with master node's ip, and `worker-address` with the current worker node's ip
 
-This is the quick start by docker. **If you still want to go through the detail steps for deployment, we offer the step by step guide as well**:
+##2. Manually ( Step by Step )
 
 ### Step.0 Pre-requistie
 Install at each nodes ( Master and Worker)
