@@ -122,12 +122,15 @@
 <h2>
 <a id="a-deploy-and-run-speedo-without-yarn-and-hdfs" class="anchor" href="#a-deploy-and-run-speedo-without-yarn-and-hdfs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A. Deploy and run SpeeDO without YARN and HDFS</h2>
 
-<p><strong>Before deploying manually on all nodes, we offer the one key deployment by docker for a quick start</strong>:</p>
+<p>We provides TWO methods here: 1) Docker , 2) Manual ( step by step)</p>
+
+<h2>
+<a id="1-quick-start--via-docker-" class="anchor" href="#1-quick-start--via-docker-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Quick Start ( via Docker )</h2>
 
 <h3>
 <a id="step0-pull-image" class="anchor" href="#step0-pull-image" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.0 Pull image</h3>
 
-<p>Pull the speedo image with caffe and all its dependencies installed:</p>
+<p>Pull the speedo image ( bundled with caffe and all its dependencies libraries):</p>
 
 <div class="highlight highlight-source-shell"><pre>docker pull obdg/speedo:latest</pre></div>
 
@@ -161,7 +164,8 @@ Redis service will be started automatically when launching master container</p>
 
 <p>Please replaces <code>master-address</code> with master node's ip, and <code>worker-address</code> with the current worker node's ip</p>
 
-<p>This is the quick start by docker. <strong>If you still want to go through the detail steps for deployment, we offer the step by step guide as well</strong>:</p>
+<h2>
+<a id="2-manually--step-by-step-" class="anchor" href="#2-manually--step-by-step-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Manually ( Step by Step )</h2>
 
 <h3>
 <a id="step0-pre-requistie" class="anchor" href="#step0-pre-requistie" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.0 Pre-requistie</h3>
@@ -318,14 +322,3 @@ sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifa
   
   </body>
 </html>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-75238565-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
-
