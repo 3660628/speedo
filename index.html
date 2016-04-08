@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Speedo by obdg</title>
+    <title>Speedo by openbigdatagroup</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -13,9 +13,9 @@
     <section class="page-header">
       <h1 class="project-name">Speedo</h1>
       <h2 class="project-tagline">Parallelizing Stochastic Gradient Descent for Deep Convolutional Neural Network</h2>
-      <a href="https://github.com/obdg/speedo" class="btn">View on GitHub</a>
-      <a href="https://github.com/obdg/speedo/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/obdg/speedo/tarball/master" class="btn">Download .tar.gz</a>
+      <a href="https://github.com/openbigdatagroup/speedo" class="btn">View on GitHub</a>
+      <a href="https://github.com/openbigdatagroup/speedo/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/openbigdatagroup/speedo/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
@@ -50,7 +50,7 @@
 
 <p>SpeeDO takes advantage of many existing solutions in the open-source community, data flow of SpeeDO:</p>
 
-<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_architecture.png" alt="Architecture and data flow of SpeeDO" title="Architecture and data flow of SpeeDO"></p>
+<p><img src="https://raw.githubusercontent.com/openbigdatagroup/speedo/master/data/figures/speedo_architecture.png" alt="Architecture and data flow of SpeeDO" title="Architecture and data flow of SpeeDO"></p>
 
 <p>SpeeDO mainly contains these components:</p>
 
@@ -132,7 +132,7 @@
 
 <p>Pull the speedo image ( bundled with caffe and all its dependencies libraries):</p>
 
-<div class="highlight highlight-source-shell"><pre>docker pull obdg/speedo:latest</pre></div>
+<div class="highlight highlight-source-shell"><pre>docker pull openbigdatagroup/speedo:latest</pre></div>
 
 <h3>
 <a id="step1-run-containers-on-cluster" class="anchor" href="#step1-run-containers-on-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.1 Run containers on cluster</h3>
@@ -144,11 +144,11 @@
 
 <p>Launch master container on your master node (in default Async model with 3 workers):</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo</pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host openbigdatagroup/speedo</pre></div>
 
 <p><strong>Or</strong> run master actor in Easgd model with 3 workers</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo master <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> 3 --test 0 --maxIter 1000 --movingRate 0.5</pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host openbigdatagroup/speedo master <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> 3 --test 0 --maxIter 1000 --movingRate 0.5</pre></div>
 
 <p>Please replaces <code>master-address</code> with master node's ip</p>
 
@@ -160,7 +160,7 @@ Redis service will be started automatically when launching master container</p>
 
 <p>Launch 3 worker containers on different worker nodes:</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-worker --net=host obdg/speedo worker <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-worker --net=host openbigdatagroup/speedo worker <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span></pre></div>
 
 <p>Please replaces <code>master-address</code> with master node's ip, and <code>worker-address</code> with the current worker node's ip</p>
 
@@ -177,13 +177,13 @@ Redis service will be started automatically when launching master container</p>
 
 <p>Please use</p>
 
-<pre><code>git clone --recursive git@github.com/obdg/speedo.git # SpeeDO and caffe
+<pre><code>git clone --recursive git@github.com/openbigdatagroup/speedo.git # SpeeDO and caffe
 </code></pre>
 
 <h3>
 <a id="step1-install-caffe-and-its-dependencies" class="anchor" href="#step1-install-caffe-and-its-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.1 Install caffe and its dependencies</h3>
 
-<p>Install <a href="https://github.com/obdg/caffe">speedo/caffe</a> and all its dependencies on each nodes , please refer to section <strong>A. Manually install on all cluster nodes</strong> from <a href="https://github.com/obdg/caffe">speedo/caffe install guide</a>.</p>
+<p>Install <a href="https://github.com/openbigdatagroup/caffe">speedo/caffe</a> and all its dependencies on each nodes , please refer to section <strong>A. Manually install on all cluster nodes</strong> from <a href="https://github.com/openbigdatagroup/caffe">speedo/caffe install guide</a>.</p>
 
 <h3>
 <a id="step2-prepare-input-data-to-run-under-caffe" class="anchor" href="#step2-prepare-input-data-to-run-under-caffe" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step.2 Prepare Input Data to run under Caffe</h3>
@@ -231,7 +231,7 @@ sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifa
 
 <p>On each master and worker nodes, run</p>
 
-<div class="highlight highlight-source-shell"><pre>git clone git@github.com/obdg/speedo.git <span class="pl-c"># if not done yet</span>
+<div class="highlight highlight-source-shell"><pre>git clone git@github.com/openbigdatagroup/speedo.git <span class="pl-c"># if not done yet</span>
 <span class="pl-c1">cd</span> speedo
 ./sbt akka:assembly</pre></div>
 
@@ -271,22 +271,22 @@ sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifa
 <h2>
 <a id="b-deploy-and-run-speedo-by-cloudera" class="anchor" href="#b-deploy-and-run-speedo-by-cloudera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>B. Deploy and run SpeeDO by cloudera</h2>
 
-<p>To try a cloudera solution for SpeeDO. Please refer <a href="https://github.com/obdg/speedo/blob/master/README_YARN.md">Run SpeeDO on Yarn &amp; HDFS Cluster</a></p>
+<p>To try a cloudera solution for SpeeDO. Please refer <a href="https://github.com/openbigdatagroup/speedo/blob/master/README_YARN.md">Run SpeeDO on Yarn &amp; HDFS Cluster</a></p>
 
 <h2>
 <a id="experiments-on-aws" class="anchor" href="#experiments-on-aws" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Experiments on AWS</h2>
 
 <p>The Cifar10 dataset is used to validate all parallel implementations on a CPU cluster with four 8-core instances</p>
 
-<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_psgd_cpu.png" alt="SGD parallel schemes on CPU cluster" title="SGD parallel schemes on CPU cluster"></p>
+<p><img src="https://raw.githubusercontent.com/openbigdatagroup/speedo/master/data/figures/speedo_psgd_cpu.png" alt="SGD parallel schemes on CPU cluster" title="SGD parallel schemes on CPU cluster"></p>
 
 <p>Training <a href="http://www.cs.unc.edu/%7Ewliu/papers/GoogLeNet.pdf">GoogleNet</a> on a GPU cluster for different parallel implementations</p>
 
-<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_psgd_gpu.png" alt="SGD parallel schemes on GPU cluster" title="SGD parallel schemes on GPU cluster"></p>
+<p><img src="https://raw.githubusercontent.com/openbigdatagroup/speedo/master/data/figures/speedo_psgd_gpu.png" alt="SGD parallel schemes on GPU cluster" title="SGD parallel schemes on GPU cluster"></p>
 
 <p>EASGD achieves the best speedup in our parallel implementations. And parameters of it have great impact for the speedup.</p>
 
-<p><img src="https://raw.githubusercontent.com/obdg/speedo/master/data/figures/speedo_easgd_gpu.png" alt="Parameter Analysis of EASGD on GPU Cluster" title="Parameter Analysis of EASGD on GPU Cluster"></p>
+<p><img src="https://raw.githubusercontent.com/openbigdatagroup/speedo/master/data/figures/speedo_easgd_gpu.png" alt="Parameter Analysis of EASGD on GPU Cluster" title="Parameter Analysis of EASGD on GPU Cluster"></p>
 
 <h2>
 <a id="authors" class="anchor" href="#authors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors</h2>
@@ -312,7 +312,7 @@ sed -i <span class="pl-s"><span class="pl-pds">"</span>s/examples\/cifar10\/cifa
 <p>Licensed under the Apache License, Version 2.0: <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/obdg/speedo">Speedo</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/openbigdatagroup/speedo">Speedo</a> is maintained by <a href="https://github.com/openbigdatagroup">openbigdatagroup</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
