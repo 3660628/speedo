@@ -144,11 +144,11 @@
 
 <p>Launch master container on your master node (in default Async model with 3 workers):</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host openbigdatagroup/speedo</pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo</pre></div>
 
 <p><strong>Or</strong> run master actor in Easgd model with 3 workers</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host openbigdatagroup/speedo master <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> 3 --test 0 --maxIter 1000 --movingRate 0.5</pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-master --net=host obdg/speedo master <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> 3 --test 0 --maxIter 1000 --movingRate 0.5</pre></div>
 
 <p>Please replaces <code>master-address</code> with master node's ip</p>
 
@@ -160,7 +160,7 @@ Redis service will be started automatically when launching master container</p>
 
 <p>Launch 3 worker containers on different worker nodes:</p>
 
-<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-worker --net=host openbigdatagroup/speedo worker <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>docker run -d --name=speedo-worker --net=host obdg/speedo worker <span class="pl-k">&lt;</span>master-address<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>worker-address<span class="pl-k">&gt;</span></pre></div>
 
 <p>Please replaces <code>master-address</code> with master node's ip, and <code>worker-address</code> with the current worker node's ip</p>
 
